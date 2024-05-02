@@ -31,7 +31,7 @@
 
     - name: Retrieve Information for Subnet
       uri:
-        url: "https:10.190.126.110:9440/api/nutanix/v3/subnets/list"
+        url: "https://10.190.126.110:9440/api/nutanix/v3/subnets/list"
         user: "admin"
         password: "C00p_HQad@20fr!"
         method: POST
