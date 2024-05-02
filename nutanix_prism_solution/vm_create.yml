@@ -11,9 +11,9 @@
 
     - name: Retrieve Information of Golden Image
       uri:
-        url: "https://{{ prism }}:9440/api/nutanix/v3/images/list"
-        user: "{{ prism_user }}"
-        password: "{{ prism_password }}"
+        url: "https://10.190.126.110:9440/api/nutanix/v3/images/list"
+        user: "admin"
+        password: "C00p_HQad@20fr!"
         method: POST
         body: "{{ lookup('file','get_image.json') }}"
         force_basic_auth: yes
