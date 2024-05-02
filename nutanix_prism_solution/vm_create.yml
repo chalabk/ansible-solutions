@@ -31,9 +31,9 @@
 
     - name: Retrieve Information for Subnet
       uri:
-        url: "https://{{ prism }}:9440/api/nutanix/v3/subnets/list"
-        user: "{{ prism_user }}"
-        password: "{{ prism_password }}"
+        url: "https:10.190.126.110:9440:9440/api/nutanix/v3/subnets/list"
+        user: "admin"
+        password: "C00p_HQad@20fr!"
         method: POST
         body: "{{ lookup('file','get_subnet.json') }}"
         force_basic_auth: yes
@@ -51,9 +51,9 @@
 
     - name: Retrieve Information of Cluster
       uri:
-        url: "https://{{ prism }}:9440/api/nutanix/v3/clusters/list"
-        user: "{{ prism_user }}"
-        password: "{{ prism_password }}"
+        url: "https://10.190.126.110:9440/api/nutanix/v3/clusters/list"
+        user: "admin"
+        password: "C00p_HQad@20fr!"
         method: POST
         body: "{{ lookup('file','get_cluster.json') }}"
         force_basic_auth: yes
@@ -71,9 +71,9 @@
 
     - name: Create VM
       uri:
-        url: "https://{{ prism }}:9440/api/nutanix/v3/vms"
-        user: "{{ prism_user }}"
-        password: "{{ prism_password }}"
+        url: "https://10.190.126.110:9440/api/nutanix/v3/vms"
+        user: "admin"
+        password: "C00p_HQad@20fr!"
         method: POST
         body: "{{ lookup('file','create_vm.json') }}"
         force_basic_auth: yes
@@ -91,9 +91,9 @@
     # the conditional checks will need to be updated/changed accordingly.
     - name: Get VM Atttributes
       uri:
-        url: "https://{{ prism }}:9440/api/nutanix/v3/vms/{{ vm_creation.json.metadata.uuid }}"
-        user: "{{ prism_user }}"
-        password: "{{ prism_password }}"
+        url: "https://10.190.126.110:9440/api/nutanix/v3/vms/{{ vm_creation.json.metadata.uuid }}"
+        user: "admin"
+        password: "C00p_HQad@20fr!"
         method: GET
         force_basic_auth: yes
         validate_certs: no
