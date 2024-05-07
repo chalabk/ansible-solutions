@@ -1,12 +1,12 @@
 {
   "spec": {
-    "name": "{{ vm_name }}",
+    "name": "Test_Vm_Ans",
     "description": "Ansible Managed",
     "resources": {
         "power_state": "ON",
-        "num_vcpus_per_socket": {{ num_of_cpu }},
+        "num_vcpus_per_socket": 4,
         "num_sockets": 1,
-        "memory_size_mib": {{ memory_mb }},
+        "memory_size_mib": 200,
         "disk_list": [{
             "device_properties": {
                 "device_type": "DISK",
