@@ -1,12 +1,12 @@
 {
   "spec": {
-    "name": "Test_Vm_Ans",
+    "name": "{{ vm_name }}",
     "description": "Ansible Managed",
     "resources": {
         "power_state": "ON",
-        "num_vcpus_per_socket": 4,
+        "num_vcpus_per_socket": {{ num_of_cpu }},
         "num_sockets": 1,
-        "memory_size_mib": 200,
+        "memory_size_mib": {{ memory_mb }},
         "disk_list": [{
             "device_properties": {
                 "device_type": "DISK",
@@ -28,7 +28,7 @@
             }],
             "subnet_reference": {
                 "kind": "subnet",
-                "name": "VLAN_250",
+                "name": "{{ vm_subnet_name }}",
                 "uuid": "{{ vm_subnet.json.entities[0].metadata.uuid }}"
             }
         }],
