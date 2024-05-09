@@ -8,8 +8,9 @@
 
     - name: Create a new user
       user:
-        name: your_username
+        name: testuser
         state: present
         shell: /bin/bash
+        password: "{{ 'Coop#4321' | password_hash('sha512') }}"
 
 
