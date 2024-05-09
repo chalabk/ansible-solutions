@@ -1,4 +1,9 @@
 ---
+- name: Ping CentOS server
+  hosts: nati-desktop
+  tasks:
+    - name: Ping the server
+      ping:
 - name: Create user on CentOS
   hosts: nati-desktop
   become: yes
