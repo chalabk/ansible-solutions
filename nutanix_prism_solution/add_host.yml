@@ -1,6 +1,6 @@
 ---
 - name: Add VM to Inventory
-  hosts: all
+  hosts: localhost
   gather_facts: no
 
   tasks:
