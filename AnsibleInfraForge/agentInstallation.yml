@@ -1,6 +1,7 @@
-- name: Deploy Wazuh Agent
-  hosts: all  # Specify your inventory group or host pattern here
-  become: true  # Run tasks with sudo
+---
+- name: Install and Configure Wazuh Agent
+  hosts: your_hosts
+  become: yes
   tasks:
     - name: Download Wazuh Agent .deb package
       ansible.builtin.get_url:
@@ -8,34 +9,24 @@
         dest: "/tmp/wazuh-agent_4.7.3-1_amd64.deb"
 
     - name: Install Wazuh Agent
-      ansible.builtin.deb:
-        deb: "/tmp/wazuh-agent_4.7.3-1_amd64.deb"
-        update_cache: yes
+      ansible.builtin.command: >
+        dpkg -i /tmp/wazuh-agent_4.7.3-1_amd64.deb
+      args:
+        creates: /var/ossec/etc/ossec.conf
 
-    - name: Configure Wazuh Agent
-      ansible.builtin.lineinfile:
-        path: /var/ossec/etc/ossec.conf  # Path to the Wazuh agent configuration file
-        line: |
-          <ossec_config>
-            <client>
-              <server>
-                <address>10.103.205.52</address>  # Replace with your Wazuh manager IP
-                <port>1514</port>  # Adjust port if needed
-              </server>
-              <auth>
-                <api_key>password</api_key>  # Replace with your registration password
-              </auth>
-              <group>Linux</group>  # Replace with your desired agent group
-            </client>
-          </ossec_config>
-      notify:
-        - restart wazuh-agent
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
+      become: yes
 
-  handlers:
-    - name: restart wazuh-agent
-      ansible.builtin.service:
+    - name: Enable Wazuh Agent service
+      ansible.builtin.systemd:
         name: wazuh-agent
-        state: restarted
+        enabled: yes
+      become: yes
 
-
-
+    - name: Start Wazuh Agent service
+      ansible.builtin.systemd:
+        name: wazuh-agent
+        state: started
+      become: yes
