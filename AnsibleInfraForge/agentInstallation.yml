@@ -1,6 +1,6 @@
 ---
 - name: Install and Configure Wazuh Agent
-  hosts: your_hosts
+  hosts: all
   become: yes
   tasks:
     - name: Download Wazuh Agent .deb package
