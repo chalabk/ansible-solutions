@@ -1,9 +1,6 @@
-                                                                                                deploy_wazuh_agent1.yml
----
 - name: Deploy Wazuh Agent
   hosts: all  # Specify your inventory group or host pattern here
   become: true  # Run tasks with sudo
-
   tasks:
     - name: Download Wazuh Agent .deb package
       ansible.builtin.get_url:
@@ -11,15 +8,9 @@
         dest: "/tmp/wazuh-agent_4.7.3-1_amd64.deb"
 
     - name: Install Wazuh Agent
-      ansible.builtin.package:
-        name: "/tmp/wazuh-agent_4.7.3-1_amd64.deb"
-        state: present
-      register: wazuh_install_result
-      ignore_errors: yes  # Ignore errors to handle custom error messages in handler
-
-    - name: Check Wazuh Agent Installation Result
-      ansible.builtin.debug:
-        msg: "{{ wazuh_install_result }}"
+      ansible.builtin.deb:
+        deb: "/tmp/wazuh-agent_4.7.3-1_amd64.deb"
+        update_cache: yes
 
     - name: Configure Wazuh Agent
       ansible.builtin.lineinfile:
@@ -45,7 +36,6 @@
       ansible.builtin.service:
         name: wazuh-agent
         state: restarted
-
 
 
 
