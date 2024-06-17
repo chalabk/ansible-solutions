@@ -1,39 +1,51 @@
-
 ---
 - name: Create a single user on multiple OS distributions
   hosts: all
   become: yes
   vars:
-    username: "{{user_name}}"
-    password: "{{password}}"
+    username: "{{ user_name }}"
+    password: "{{ password }}"
   tasks:
     - name: Ping the server
       ping:
 
-    - name: Create user on Red Hat/CentOS/Oracle Linux
-      user:
-        name: "{{ username }}"
-        state: present
-        shell: /bin/bash
-        password: "{{ password | password_hash('sha512') }}"
-    - name: Force user to change password on next login
-      command: chage -d 0 "{{ username }}"
-      args:
-        warn: false
+    - name: Create and configure user on Red Hat/CentOS/Oracle Linux
+      block:
+        - name: Create user on Red Hat/CentOS/Oracle Linux
+          user:
+            name: "{{ username }}"
+            state: present
+            shell: /bin/bash
+            password: "{{ password | password_hash('sha512') }}"
+          
+        - name: Force user to change password on next login (Red Hat/CentOS/Oracle Linux)
+          command: chage -d 0 "{{ username }}"
+          args:
+            warn: false
       when: ansible_distribution in ['RedHat', 'CentOS', 'OracleLinux']
+      rescue:
+        - debug:
+            msg: "Failed to create or configure user on Red Hat/CentOS/Oracle Linux"
 
-    - name: Create user on Ubuntu
-      user:
-        name: "{{ username }}"
-        state: present
-        shell: /bin/bash
-        password: "{{ password | password_hash('sha512') }}"
-    - name: Force user to change password on next login
-      command: chage -d 0 "{{ username }}"
-      args:
-        warn: false
+    - name: Create and configure user on Ubuntu
+      block:
+        - name: Create user on Ubuntu
+          user:
+            name: "{{ username }}"
+            state: present
+            shell: /bin/bash
+            password: "{{ password | password_hash('sha512') }}"
+          
+        - name: Force user to change password on next login (Ubuntu)
+          command: chage -d 0 "{{ username }}"
+          args:
+            warn: false
       when: ansible_distribution == 'Ubuntu'
       rescue:
         - debug:
-            msg: "Unsupported distribution for creating users: {{ ansible_distribution }}"
+            msg: "Failed to create or configure user on Ubuntu"
 
+    - name: Handle unsupported distributions
+      debug:
+        msg: "Unsupported distribution for creating users: {{ ansible_distribution }}"
+      when: ansible_distribution not in ['RedHat', 'CentOS', 'OracleLinux', 'Ubuntu']
