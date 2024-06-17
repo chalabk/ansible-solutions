@@ -1,0 +1,28 @@
+---
+- name: Delete a single user on multiple OS distributions
+  hosts: all
+  become: yes
+  vars:
+    username: "{{ user_name }}"
+  tasks:
+    - name: Ping the server
+      ping:
+
+    - name: Delete user on Red Hat/CentOS/Oracle Linux
+      user:
+        name: "{{ username }}"
+        state: absent
+        remove: yes
+      when: ansible_distribution in ['RedHat', 'CentOS', 'OracleLinux']
+
+    - name: Delete user on Ubuntu
+      user:
+        name: "{{ username }}"
+        state: absent
+        remove: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Unsupported distribution message
+      debug:
+        msg: "Unsupported distribution for deleting users: {{ ansible_distribution }}"
+      when: ansible_distribution not in ['RedHat', 'CentOS', 'OracleLinux', 'Ubuntu']
