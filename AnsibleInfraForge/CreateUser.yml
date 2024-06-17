@@ -17,9 +17,9 @@
         shell: /bin/bash
         password: "{{ password | password_hash('sha512') }}"
     - name: Force user to change password on next login
-          command: chage -d 0 "{{ username }}"
-          args:
-            warn: false
+      command: chage -d 0 "{{ username }}"
+      args:
+        warn: false
       when: ansible_distribution in ['RedHat', 'CentOS', 'OracleLinux']
 
     - name: Create user on Ubuntu
@@ -29,9 +29,9 @@
         shell: /bin/bash
         password: "{{ password | password_hash('sha512') }}"
     - name: Force user to change password on next login
-          command: chage -d 0 "{{ username }}"
-          args:
-            warn: false
+      command: chage -d 0 "{{ username }}"
+      args:
+        warn: false
       when: ansible_distribution == 'Ubuntu'
       rescue:
         - debug:
