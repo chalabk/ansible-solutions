@@ -19,7 +19,7 @@
             password: "{{ password | password_hash('sha512') }}"
           
         - name: Force user to change password on next login (Red Hat/CentOS/Oracle Linux)
-          command: chage -d 0 "{{ username }}"
+          ansible.builtin.command: chage -d 0 "{{ username }}"
           args:
             warn: false
       when: ansible_distribution in ['RedHat', 'CentOS', 'OracleLinux']
@@ -37,7 +37,7 @@
             password: "{{ password | password_hash('sha512') }}"
           
         - name: Force user to change password on next login (Ubuntu)
-          command: chage -d 0 "{{ username }}"
+          ansible.builtin.command: chage -d 0 "{{ username }}"
           args:
             warn: false
       when: ansible_distribution == 'Ubuntu'
