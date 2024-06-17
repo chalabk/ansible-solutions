@@ -3,21 +3,21 @@
   hosts: all
   become: yes
   vars:
-    username: motumag
+    username: tamirud
   tasks:
     - name: Ping the server
       ping:
 
     - name: Delete user on Red Hat/CentOS/Oracle Linux
       user:
-        name: motumag
+        name: tamirud
         state: absent
         remove: yes
       when: ansible_distribution in ['RedHat', 'CentOS', 'OracleLinux']
 
     - name: Delete user on Ubuntu
       user:
-        name: motumag
+        name: tamirud
         state: absent
         remove: yes
       when: ansible_distribution == 'Ubuntu'
