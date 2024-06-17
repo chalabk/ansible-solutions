@@ -20,8 +20,6 @@
           
         - name: Force user to change password on next login (Red Hat/CentOS/Oracle Linux)
           ansible.builtin.command: chage -d 0 "{{ username }}"
-          args:
-            warn: false
       when: ansible_distribution in ['RedHat', 'CentOS', 'OracleLinux']
       rescue:
         - debug:
@@ -38,8 +36,6 @@
           
         - name: Force user to change password on next login (Ubuntu)
           ansible.builtin.command: chage -d 0 "{{ username }}"
-          args:
-            warn: false
       when: ansible_distribution == 'Ubuntu'
       rescue:
         - debug:
