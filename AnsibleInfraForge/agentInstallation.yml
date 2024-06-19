@@ -2,6 +2,12 @@
 - name: Install and Configure Wazuh Agent
   hosts: all
   become: yes
+
+  vars:
+    wazuh_manager_ip: '10.103.205.52'
+    wazuh_registration_password: 'password'
+    wazuh_agent_group: 'Linux'
+
   tasks:
     - name: Download Wazuh Agent .deb package
       ansible.builtin.get_url:
@@ -14,19 +20,34 @@
       args:
         creates: /var/ossec/etc/ossec.conf
 
+    - name: Add Wazuh manager IP to ossec.conf
+      ansible.builtin.lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        insertafter: "<client>"
+        line: "<address>{{ wazuh_manager_ip }}</address>"
+
+    - name: Add Wazuh registration password to ossec.conf
+      ansible.builtin.lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        insertafter: "<client>"
+        line: "<auth><password>{{ wazuh_registration_password }}</password></auth>"
+
+    - name: Add Wazuh agent group to ossec.conf
+      ansible.builtin.lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        insertafter: "<client>"
+        line: "<group>{{ wazuh_agent_group }}</group>"
+
     - name: Reload systemd daemon
       ansible.builtin.systemd:
         daemon_reload: yes
-      become: yes
 
     - name: Enable Wazuh Agent service
       ansible.builtin.systemd:
         name: wazuh-agent
         enabled: yes
-      become: yes
 
     - name: Start Wazuh Agent service
       ansible.builtin.systemd:
         name: wazuh-agent
         state: started
-      become: yes
