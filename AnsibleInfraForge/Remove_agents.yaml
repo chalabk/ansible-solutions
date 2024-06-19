@@ -1,0 +1,33 @@
+---
+- name: Remove Wazuh Agent
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Stop Wazuh Agent service
+      ansible.builtin.systemd:
+        name: wazuh-agent
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Remove Wazuh Agent package
+      ansible.builtin.package:
+        name: wazuh-agent
+        state: absent
+
+    - name: Remove Wazuh Agent configuration directory
+      ansible.builtin.file:
+        path: /var/ossec
+        state: absent
+      ignore_errors: yes
+
+    - name: Remove Wazuh Agent log directory
+      ansible.builtin.file:
+        path: /var/log/wazuh
+        state: absent
+      ignore_errors: yes
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
