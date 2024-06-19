@@ -5,10 +5,32 @@
 
   vars:
     wazuh_manager_ip: '10.103.205.52'
-    wazuh_registration_password: 'password'
-    wazuh_agent_group: 'Linux'
 
   tasks:
+    - name: Stop Wazuh Agent service if running
+      ansible.builtin.systemd:
+        name: wazuh-agent
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Remove Wazuh Agent package if installed
+      ansible.builtin.package:
+        name: wazuh-agent
+        state: absent
+
+    - name: Remove Wazuh Agent configuration directory
+      ansible.builtin.file:
+        path: /var/ossec
+        state: absent
+      ignore_errors: yes
+
+    - name: Remove Wazuh Agent log directory
+      ansible.builtin.file:
+        path: /var/log/wazuh
+        state: absent
+      ignore_errors: yes
+
     - name: Download Wazuh Agent .deb package
       ansible.builtin.get_url:
         url: "https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.7.3-1_amd64.deb"
@@ -25,18 +47,6 @@
         path: /var/ossec/etc/ossec.conf
         insertafter: "<client>"
         line: "<address>{{ wazuh_manager_ip }}</address>"
-
-    - name: Add Wazuh registration password to ossec.conf
-      ansible.builtin.lineinfile:
-        path: /var/ossec/etc/ossec.conf
-        insertafter: "<client>"
-        line: "<auth><password>{{ wazuh_registration_password }}</password></auth>"
-
-    - name: Add Wazuh agent group to ossec.conf
-      ansible.builtin.lineinfile:
-        path: /var/ossec/etc/ossec.conf
-        insertafter: "<client>"
-        line: "<group>{{ wazuh_agent_group }}</group>"
 
     - name: Reload systemd daemon
       ansible.builtin.systemd:
