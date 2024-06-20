@@ -1,0 +1,79 @@
+---
+- name: Install and Configure Osquery
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Set OSQUERY_KEY environment variable
+      ansible.builtin.shell: |
+        export OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
+        echo "OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B" >> /etc/environment
+      args:
+        executable: /bin/bash
+
+    - name: Add Osquery GPG key
+      ansible.builtin.apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: "1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B"
+        state: present
+
+    - name: Add Osquery repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://pkg.osquery.io/deb deb main"
+        state: present
+
+    - name: Update apt package list
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install Osquery
+      ansible.builtin.apt:
+        name: osquery
+        state: present
+
+    - name: Create /etc/osquery directory if it doesn't exist
+      ansible.builtin.file:
+        path: /etc/osquery
+        state: directory
+        mode: '0755'
+
+    - name: Add Osquery configuration
+      ansible.builtin.copy:
+        dest: /etc/osquery/osquery.conf
+        content: |
+          {
+              "options": {
+                  "config_plugin": "filesystem",
+                  "logger_plugin": "filesystem",
+                  "utc": "true"
+              },
+              "schedule": {
+                  "system_info": {
+                      "query": "SELECT hostname, cpu_brand, physical_memory FROM system_info;",
+                      "interval": 3600
+                  },
+                  "high_load_average": {
+                      "query": "SELECT period, average, '70%' AS 'threshold' FROM load_average WHERE period = '15m' AND average > '0.7';",
+                      "interval": 900,
+                      "description": "Report if load charge is over 70 percent."
+                  },
+                  "low_free_memory": {
+                      "query": "SELECT memory_total, memory_free, CAST(memory_free AS real) / memory_total AS memory_free_perc, '10%' AS threshold FROM memory_info WHERE memory_free_perc < 0.1;",
+                      "interval": 1800,
+                      "description": "Free RAM is under 10%."
+                  }
+              },
+              "packs": {
+                  "osquery-monitoring": "/opt/osquery/share/osquery/packs/osquery-monitoring.conf",
+                  "incident-response": "/opt/osquery/share/osquery/packs/incident-response.conf",
+                  "it-compliance": "/opt/osquery/share/osquery/packs/it-compliance.conf",
+                  "vuln-management": "/opt/osquery/share/osquery/packs/vuln-management.conf",
+                  "hardware-monitoring": "/opt/osquery/share/osquery/packs/hardware-monitoring.conf",
+                  "ossec-rootkit": "/opt/osquery/share/osquery/packs/ossec-rootkit.conf"
+              }
+          }
+
+    - name: Restart Osquery service
+      ansible.builtin.systemd:
+        name: osqueryd
+        state: restarted
