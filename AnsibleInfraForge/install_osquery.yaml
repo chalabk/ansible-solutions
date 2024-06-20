@@ -4,30 +4,23 @@
   become: yes
 
   tasks:
-    - name: Set OSQUERY_KEY environment variable
+    - name: Add Osquery GPG key
       ansible.builtin.shell: |
-        export OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
-        echo "OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B" >> /etc/environment
+        curl -L https://pkg.osquery.io/rpm/GPG | tee /etc/pki/rpm-gpg/RPM-GPG-KEY-osquery
       args:
         executable: /bin/bash
 
-    - name: Add Osquery GPG key
-      ansible.builtin.apt_key:
-        keyserver: keyserver.ubuntu.com
-        id: "1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B"
-        state: present
-
     - name: Add Osquery repository
-      ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64] https://pkg.osquery.io/deb deb main"
+      ansible.builtin.yum_repository:
+        name: osquery-s3-rpm-repo
+        description: Osquery Yum repository
+        baseurl: https://pkg.osquery.io/rpm/osquery-s3-rpm.repo
+        gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-osquery
+        enabled: yes
         state: present
-
-    - name: Update apt package list
-      ansible.builtin.apt:
-        update_cache: yes
 
     - name: Install Osquery
-      ansible.builtin.apt:
+      ansible.builtin.yum:
         name: osquery
         state: present
 
