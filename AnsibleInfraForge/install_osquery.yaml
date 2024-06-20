@@ -11,13 +11,16 @@
         executable: /bin/bash
 
     - name: Add Osquery repository
-      ansible.builtin.yum_repository:
-        name: osquery-s3-rpm-repo
-        description: Osquery Yum repository
-        baseurl: https://pkg.osquery.io/rpm/osquery-s3-rpm.repo
-        gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-osquery
-        enabled: yes
-        state: present
+      ansible.builtin.shell: |
+        yum-config-manager --add-repo https://pkg.osquery.io/rpm/osquery-s3-rpm.repo
+      args:
+        executable: /bin/bash
+
+    - name: Enable Osquery repository
+      ansible.builtin.shell: |
+        yum-config-manager --enable osquery-s3-rpm-repo
+      args:
+        executable: /bin/bash
 
     - name: Install Osquery
       ansible.builtin.yum:
@@ -30,7 +33,7 @@
         state: directory
         mode: '0755'
 
-    - name: Add Osquery configuration
+    - name: Add Osquery configuration via environment variable
       ansible.builtin.copy:
         dest: /etc/osquery/osquery.conf
         content: |
