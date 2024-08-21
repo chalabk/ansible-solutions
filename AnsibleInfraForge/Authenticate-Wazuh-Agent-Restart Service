@@ -1,0 +1,13 @@
+---
+- name: Authenticate Wazuh Agent and Restart Service
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Run Wazuh agent-auth command
+      command: /var/ossec/bin/agent-auth -m 0.0.0.0
+
+    - name: Restart wazuh-agent service
+      systemd:
+        name: wazuh-agent
+        state: restarted
