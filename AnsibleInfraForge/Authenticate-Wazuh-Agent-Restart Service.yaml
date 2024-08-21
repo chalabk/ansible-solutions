@@ -5,7 +5,7 @@
 
   tasks:
     - name: Run Wazuh agent-auth command
-      command: /var/ossec/bin/agent-auth -m 0.0.0.0
+      command: /var/ossec/bin/agent-auth -m 10.103.205.52
 
     - name: Restart wazuh-agent service
       systemd:
