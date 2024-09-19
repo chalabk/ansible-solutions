@@ -1,1 +1,80 @@
 
+---
+- name: Get VM details from Nutanix AHV and add to AWX inventory
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    prism_central_ip: "10.12.22.200"
+    prism_user: "chalab@hcisecondary.coopbank"
+    prism_password: "Passchalabk32321"
+    awx_inventory_name: "Nutanix_VM_Inventory"
+    awx_inventory_organization: "CBO"
+    awx_host: "http://awx.coopbankoromiasc.com"
+    awx_username: "chalabk"
+    awx_password: "Password@123"
+
+  tasks:
+    - name: Get VM details from Nutanix AHV
+      uri:
+        url: "https://{{ prism_central_ip }}:9440/api/nutanix/v3/vms/list"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        user: "{{ prism_user }}"
+        password: "{{ prism_password }}"
+        body:
+          kind: "vm"
+          offset: 0
+          length: 100
+        body_format: json
+        validate_certs: no
+      register: vm_list
+
+    - name: Parse VM and IP details
+      set_fact:
+        vm_details: "{{ vm_list.json.entities | map(attribute='spec') | list }}"
+
+    - name: Get AWX Inventory ID
+      uri:
+        url: "{{ awx_host }}/api/v2/inventories/?name={{ awx_inventory_name }}&organization={{ awx_inventory_organization }}"
+        method: GET
+        user: "{{ awx_username }}"
+        password: "{{ awx_password }}"
+        return_content: yes
+        headers:
+          Content-Type: "application/json"
+      register: inventory_id
+      failed_when: inventory_id.json.count == 0
+
+    - name: Add VMs to AWX inventory as hosts
+      uri:
+        url: "{{ awx_host }}/api/v2/hosts/"
+        method: POST
+        user: "{{ awx_username }}"
+        password: "{{ awx_password }}"
+        headers:
+          Content-Type: "application/json"
+        body: |
+          {
+            "name": "{{ item.name }}",
+            "inventory": "{{ inventory_id.json.results[0].id }}",
+            "enabled": true,
+            "variables": "ansible_host: {{ item.resources.nic_list[0].ip_endpoint_list[0].ip }}"
+          }
+        body_format: json
+        validate_certs: no
+      loop: "{{ vm_details }}"
+      when: item.resources.nic_list[0].ip_endpoint_list is defined
+
+    - name: Sync inventory source on AWX
+      uri:
+        url: "{{ awx_host }}/api/v2/inventory_sources/{{ inventory_id.json.results[0].id }}/update/"
+        method: POST
+        user: "{{ awx_username }}"
+        password: "{{ awx_password }}"
+        headers:
+          Content-Type: "application/json"
+        body_format: json
+        validate_certs: no
