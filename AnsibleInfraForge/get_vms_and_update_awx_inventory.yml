@@ -11,7 +11,7 @@
     prism_password: "Passchalabk32321"
     awx_inventory_name: "Nutanix_VM_Inventory"
     awx_inventory_organization: "CBO"
-    awx_host: "http://awx.coopbankoromiasc.com"
+    awx_host: "https://awx.coopbankoromiasc.com"
     awx_username: "chalabk"
     awx_password: "Password@123"
 
