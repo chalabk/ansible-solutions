@@ -2,8 +2,8 @@
 ---
 - name: Get VM details from Nutanix AHV and add to AWX inventory
   hosts: all
-  gather_facts: no
-
+  become: yes
+  
   vars:
     prism_central_ip: "10.12.22.200"
     prism_user: "chalab@hcisecondary.coopbank"
