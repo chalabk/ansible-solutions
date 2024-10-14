@@ -1,4 +1,3 @@
-
 ---
 - name: Get VM details from Nutanix AHV and add to AWX inventory
   hosts: all
