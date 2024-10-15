@@ -4,14 +4,6 @@
   become: yes
   
   vars:
-    prism_central_ip: "10.12.22.200"
-    prism_user: "chalab@hcisecondary.coopbank"
-    prism_password: "Passchalabk32321"
-    awx_inventory_name: "Nutanix_VM_Inventory"
-    awx_inventory_organization: "CBO"
-    awx_host: "https://awx.coopbankoromiasc.com"
-    awx_username: "chalabk"
-    awx_password: "Password@123"
 
   tasks:
     - name: Get VM details from Nutanix AHV
