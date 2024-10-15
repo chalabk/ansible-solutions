@@ -10,8 +10,8 @@
         method: POST
         headers:
           Content-Type: "application/json"
-        user: "{{ prism_user }}"
-        password: "{{ prism_password }}"
+        url_username: "{{ prism_user }}"
+        url_password: "{{ prism_password }}"
         body:
           kind: "vm"
           offset: 0
