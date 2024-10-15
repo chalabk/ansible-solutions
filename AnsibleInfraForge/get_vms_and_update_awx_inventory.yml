@@ -3,22 +3,23 @@
   hosts: localhost
   gather_facts: no
   
-  tasks:
-    - name: Get VM details from Nutanix AHV
-      uri:
-        url: "https://{{ prism_central_ip }}:9440/api/nutanix/v3/vms/list"
-        method: POST
-        headers:
-          Content-Type: "application/json"
-        user: "{{ prism_user }}"
-        password: "{{ prism_password }}"
-        body:
-          kind: "vm"
-          offset: 0
-          length: 100
-        body_format: json
-        validate_certs: no
-      register: vm_list
+ tasks:
+  - name: Get VM details from Nutanix AHV
+    uri:
+      url: "https://{{ prism_central_ip }}:9440/api/nutanix/v3/vms/list"
+      method: POST
+      headers:
+        Content-Type: "application/json"
+      url_username: "{{ prism_user }}"
+      url_password: "{{ prism_password }}"
+      body:
+        kind: "vm"
+        offset: 0
+        length: 100
+      body_format: json
+      validate_certs: no
+    register: vm_list
+
 
     - name: Parse VM and IP details
       set_fact:
