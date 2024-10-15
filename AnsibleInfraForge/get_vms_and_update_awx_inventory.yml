@@ -13,9 +13,10 @@
         url_username: "{{ prism_user }}"
         url_password: "{{ prism_password }}"
         body:
-          kind: "vm"
-          offset: 0
-          length: 100
+          "kind": "vm",
+          "filter": {},
+          "offset": 0,
+          "length": 100
         body_format: json
         validate_certs: no
       register: vm_list
