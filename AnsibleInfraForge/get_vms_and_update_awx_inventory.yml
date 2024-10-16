@@ -14,7 +14,7 @@
         vm_details: "{{ vm_list.stdout | from_json }}"
     - name: Get AWX Inventory ID
       uri:
-        url: "https://{{ awx_host }}/api/v2/inventories/?name={{ awx_inventory_id }}&organization={{ awx_inventory_organization_id }}"
+        url: "https://{{ awx_host }}/api/v2/inventories/?name={{ awx_inventory_name }}&organization={{ awx_inventory_organization }}"
         method: GET
         user: "{{ awx_username }}"
         password: "{{ awx_password }}"
