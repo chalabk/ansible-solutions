@@ -103,9 +103,9 @@
       register: get_vm_attributes
       retries: 10
       delay: 60
-      until: get_vm_attributes.json.status.resources.nic_list[0].ip_endpoint_list[0].ip is defined
+      until: get_vm_attributes.json.status.spec.nic_list[0].ip_endpoint_list[0].ip is defined
 
     - name: Capture VM IP for subsequent workflow
       ansible.builtin.set_stats:
         data:
-          vm_ip: "{{ get_vm_attributes.json.status.resources.nic_list[0].ip_endpoint_list[0].ip }}"
+          vm_ip: "{{ get_vm_attributes.json.status.spec.nic_list[0].ip_endpoint_list[0].ip }}"
