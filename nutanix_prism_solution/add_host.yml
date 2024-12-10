@@ -31,6 +31,8 @@
         password: "{{ password }}"
         body:
           name: "{{ vm_name }}"
+          #description: "{{ vm_ip }}",
+          #description: "{{ cluster_name }}",
           inventory: "{{ ansible_inventory_id }}"
         force_basic_auth: yes
         body_format: json
