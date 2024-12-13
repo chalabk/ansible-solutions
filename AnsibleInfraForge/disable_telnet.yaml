@@ -1,7 +1,7 @@
 ---
 - name: Disable Telnet on AIX Server
   hosts: aix_servers
-  become: yes
+ # become: yes
   tasks:
     - name: Stop inetd service
       ansible.builtin.shell:
