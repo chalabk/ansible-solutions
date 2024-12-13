@@ -1,6 +1,6 @@
 ---
 - name: Disable Telnet on AIX Server
-  hosts: aix_servers
+  hosts: 10.1.250.165
   become: yes
   tasks:
     - name: Stop inetd service
