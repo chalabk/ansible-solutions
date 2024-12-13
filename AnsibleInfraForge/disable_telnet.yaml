@@ -1,0 +1,27 @@
+---
+- name: Disable Telnet on AIX Server
+  hosts: aix_servers
+  become: yes
+  tasks:
+    - name: Stop inetd service
+      ansible.builtin.shell:
+        cmd: stopsrc -s inetd
+      register: inetd_stop
+      ignore_errors: yes
+
+    - name: Disable Telnet in inetd.conf
+      ansible.builtin.shell:
+        cmd: sed -i 's/^telnet/#telnet/' /etc/inetd.conf
+      register: telnet_disable
+      ignore_errors: yes
+
+    - name: Restart inetd service
+      ansible.builtin.shell:
+        cmd: startsrc -s inetd
+      register: inetd_restart
+      ignore_errors: yes
+
+    - name: Verify inetd service status
+      ansible.builtin.shell:
+        cmd: lssrc -s inetd
+      register: inetd_status
