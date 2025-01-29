@@ -33,7 +33,7 @@
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?Banner'
-        line: 'Banner /etc/issue'
+       # line: 'Banner /etc/issue'
       become: yes  # Required to modify SSH config
 
     - name: Restart SSH service
