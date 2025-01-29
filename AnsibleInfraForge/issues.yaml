@@ -25,5 +25,4 @@
         owner: root
         group: root
         unsafe_writes: true
-        atomic: no
       become: yes  # Ensure Ansible runs this task as root
