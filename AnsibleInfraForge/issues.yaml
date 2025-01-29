@@ -1,7 +1,8 @@
 ---
-- name: Configure system warning and ssh banner
+- name: Configure system warning and SSH banner
   hosts: Wazuh
-  become: yes
+  become: yes  # Apply privilege escalation globally
+
   tasks:
     - name: Add warning message to /etc/issue
       ansible.builtin.blockinfile:
@@ -25,14 +26,17 @@
         owner: root
         group: root
         unsafe_writes: true
+      become: yes  # Ensure Ansible runs this task as root
+
     - name: Ensure Banner line exists in /etc/ssh/sshd_config
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?Banner'
         line: 'Banner /etc/issue'
-        create: yes
+      become: yes  # Required to modify SSH config
 
-    - name: Restart ssh service
-      service:
+    - name: Restart SSH service
+      ansible.builtin.systemd:
         name: sshd
         state: restarted
+      become: yes  # Ensure we have root privileges for restarting SSH
