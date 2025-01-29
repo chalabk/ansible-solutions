@@ -4,7 +4,7 @@
   become: yes
   tasks:
     - name: Add warning message to /etc/issue
-      blockinfile:
+      ansible.builtin.blockinfile:
         path: /etc/issue
         block: |
           *************************************Warning***************************************
