@@ -1,14 +1,8 @@
-- name: Temporarily disable system banner
-  ansible.builtin.lineinfile:
-    path: /etc/issue
-    regexp: '^.*Warning.*$'
-    line: '# Disabled warning banner'
-    backup: yes
-  become: yes
-
+---
 - name: Configure system warning and SSH banner
-  hosts: DC1-WAZUH-SURICATA-PRD-02
-  become: yes
+  hosts: Wazuh
+  become: yes  # Apply privilege escalation globally
+
   tasks:
     - name: Add warning message to /etc/issue
       ansible.builtin.blockinfile:
@@ -32,26 +26,17 @@
         owner: root
         group: root
         unsafe_writes: true
-        atomic: no
-      become: yes
+      become: yes  # Ensure Ansible runs this task as root
 
     - name: Ensure Banner line exists in /etc/ssh/sshd_config
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?Banner'
-        line: 'Banner /etc/issue'
-      become: yes
+       # line: 'Banner /etc/issue'
+      become: yes  # Required to modify SSH config
 
     - name: Restart SSH service
       ansible.builtin.systemd:
         name: sshd
         state: restarted
-      become: yes
-
-- name: Restore system banner
-  ansible.builtin.lineinfile:
-    path: /etc/issue
-    regexp: '^# Disabled warning banner'
-    line: '*************************************Warning***************************************'
-    backup: yes
-  become: yes
+      become: yes  # Ensure we have root privileges for restarting SSH
