@@ -5,6 +5,10 @@
   become_user: root
 
   tasks:
+    - name: Remove /etc/issue if it exists
+      file:
+        path: /etc/issue
+        state: absent
     - name: Add warning message to /etc/issue
       blockinfile:
         path: /etc/issue
