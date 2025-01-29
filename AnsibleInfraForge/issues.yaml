@@ -10,9 +10,9 @@
         path: /etc/issue
         state: absent
     - name: Add warning message to /etc/issue
-      blockinfile:
+      ansible.builtin.lineinfile:
         path: /etc/issue
-        block: |
+        line: |
           **************************************Warning****************************************
           * This system is for the use of authorized users only. Any or all uses of this      *
           * system and all files on this system may be intercepted, monitored, recorded,      *
