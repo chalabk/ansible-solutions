@@ -6,7 +6,7 @@
 
   tasks:
     - name: Add warning message to /etc/issue
-      ansible.builtin.blockinfile:
+      blockinfile:
         path: /etc/issue
         block: |
           **************************************Warning****************************************
