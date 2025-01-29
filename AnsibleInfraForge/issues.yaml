@@ -1,6 +1,6 @@
 - name: Configure system warning and SSH banner
   hosts: DC1-QAROO-WR-PRD-04
-  become: yes  # Apply privilege escalation globally
+  become: true  # Apply privilege escalation globally
 
   tasks:
     - name: Add warning message to /etc/issue
@@ -25,4 +25,4 @@
         owner: root
         group: root
         unsafe_writes: true
-      become: yes  # Ensure Ansible runs this task as root
+      become: true  # Ensure Ansible runs this task as root
