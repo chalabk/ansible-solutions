@@ -26,3 +26,4 @@
         group: root
         unsafe_writes: true
       become: true  # Ensure Ansible runs this task as root
+      become_user: root
