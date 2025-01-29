@@ -26,6 +26,7 @@
         owner: root
         group: root
         unsafe_writes: true
+        atomic: no
       become: yes  # Ensure Ansible runs this task as root
 
     - name: Ensure Banner line exists in /etc/ssh/sshd_config
