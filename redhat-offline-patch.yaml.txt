@@ -1,0 +1,59 @@
+
+---
+- name: Offline patch update from ISO on RHEL 8.10
+  hosts: rhel8
+  become: yes
+  tasks:
+
+    - name: Create mount point for ISO
+      file:
+        path: /mnt/rhel8-10
+        state: directory
+        mode: '0755'
+
+    - name: Mount ISO file
+      mount:
+        path: /mnt/rhel8-10
+        src: /dev/sr0
+        fstype: iso9660
+        state: mounted
+
+    - name: Copy repo file to /etc/yum.repos.d/
+      copy:
+        dest: /etc/yum.repos.d/rhel8-10-offline.repo
+        content: |
+          [rhel8-BaseOS]
+          name=RHEL 8 BaseOS
+          baseurl=file:///mnt/rhel8-10/BaseOS
+          enabled=1
+          gpgcheck=0
+   
+          [rhel8-AppStream]
+          name=RHEL 8 AppStream
+          baseurl=file:///mnt/rhel8-10/AppStream
+          enabled=1
+          gpgcheck=0
+
+
+    - name: Clear existing YUM cache
+      command: dnf clean all
+
+    - name: Rebuild YUM cache
+      command: dnf makecache
+
+    - name: Update all packages using offline repo
+      dnf:
+        name: '*'
+        state: latest
+        disablerepo: '*'
+        enablerepo: rhel8-BaseOS,rhel8-AppStream
+
+    - name: Unmount ISO
+      mount:
+        path: /mnt/rhel8-10
+        state: unmounted
+
+    - name: Remove offline repo file
+      file:
+        path: /etc/yum.repos.d/rhel8-10-offline.repo
+        state: absent
