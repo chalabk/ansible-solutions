@@ -1,0 +1,22 @@
+- name: Fetch VMs from Nutanix AHV
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - nutanix.ncp
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Get all Nutanix VMs
+      nutanix.ncp.vms_info:
+        pc_ip: "{{ prism_ip }}"
+        username: "{{ prism_user }}"
+        password: "{{ prism_pass }}"
+        validate_certs: false
+      register: vm_info
+
+    - name: Show VM Names and IPs
+      debug:
+        msg: "{{ item.status.name }} - {{ item.status.resources.nic_list[0].ip_endpoint_list[0].ip }}"
+      loop: "{{ vm_info.entities }}"
