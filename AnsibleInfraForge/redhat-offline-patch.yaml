@@ -1,7 +1,7 @@
 
 ---
 - name: Offline patch update from ISO on RHEL 8.10
-  hosts: Redhat-patch-update-Inv
+  hosts: all
   become: yes
   tasks:
 
