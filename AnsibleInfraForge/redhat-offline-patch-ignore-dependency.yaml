@@ -42,7 +42,7 @@
     - name: Disable libstdc++-devel upgrades (exclude in DNF)
       lineinfile:
         path: /etc/dnf/dnf.conf
-        line: 'exclude=libstdc++-devel*'
+        line: 'exclude=*.i686'
         insertafter: '[main]'
         state: present
 
