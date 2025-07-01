@@ -7,20 +7,20 @@
 
     - name: Create mount point for ISO
       file:
-        path: /mnt/rhel8-10
+        path: /mnt/rhel8
         state: directory
         mode: '0755'
 
     - name: Mount ISO file
       mount:
-        path: /mnt/rhel8-10
+        path: /mnt/rhel8
         src: /dev/sr0
         fstype: iso9660
         state: mounted
 
     - name: Copy repo file to /etc/yum.repos.d/
       copy:
-        dest: /etc/yum.repos.d/rhel8-10-offline.repo
+        dest: /etc/yum.repos.d/local.repo
         content: |
          [local-rhel8]
          name=RHEL 8 Local
