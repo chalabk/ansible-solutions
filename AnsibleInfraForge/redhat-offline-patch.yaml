@@ -48,10 +48,16 @@
     - name: Rebuild DNF cache from ISO
       command: dnf makecache
 
-    - name: Remove libstdc++-static.i686
+    #- name: Remove libstdc++-static.i686
+    #  dnf:
+    #    name: libstdc++-static.i686
+    #    state: absent
+    - name: Remove all libstdc++ related packages
       dnf:
-        name: libstdc++-static.i686
+        name: "libstdc++*"
         state: absent
+        autoremove: yes
+
 
 
     - name: Update all packages using offline ISO repos
