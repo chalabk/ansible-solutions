@@ -50,13 +50,9 @@
 
     - name: Remove libstdc++-static.i686
       dnf:
-       name: libstdc++-static.i686
+       name: libstdc++-static.i686 
        state: absent
 
-    - name: Remove libstdc++
-      dnf:
-       name: libstdc++
-       state: absent
     
     - name: Update all packages using offline ISO repos
       dnf:
