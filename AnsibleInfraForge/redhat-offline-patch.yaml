@@ -22,17 +22,12 @@
       copy:
         dest: /etc/yum.repos.d/rhel8-10-offline.repo
         content: |
-          [rhel8-BaseOS]
-          name=RHEL 8 BaseOS
-          baseurl=file:///mnt/rhel8-10/BaseOS
-          enabled=1
-          gpgcheck=0
-   
-          [rhel8-AppStream]
-          name=RHEL 8 AppStream
-          baseurl=file:///mnt/rhel8-10/AppStream
-          enabled=1
-          gpgcheck=0
+         [local-rhel8]
+         name=RHEL 8 Local
+         baseurl=file:///mnt/rhel8
+         enabled=1
+         gpgcheck=0
+
 
 
     - name: Clear existing YUM cache
