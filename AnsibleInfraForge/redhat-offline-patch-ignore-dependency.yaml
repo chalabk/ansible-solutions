@@ -38,6 +38,13 @@
           enabled=1
           gpgcheck=0
         mode: '0644'
+        
+    - name: Disable libstdc++-devel upgrades (exclude in DNF)
+      lineinfile:
+        path: /etc/dnf/dnf.conf
+        line: 'exclude=libstdc++-devel*'
+        insertafter: '[main]'
+        state: present
 
     - name: Disable all other repositories (optional for safety)
       command: dnf config-manager --disable \*
@@ -57,11 +64,7 @@
         enablerepo: rhel8-BaseOS,rhel8-AppStream
       ignore_errors: true  # Allow fallback if this fails
 
-    - name: Upgrade all packages except libstdc++-devel
-      command: >
-        dnf --disablerepo='*' --enablerepo=rhel8-BaseOS,rhel8-AppStream
-        --setopt=tsflags=nodocs --setopt=install_weak_deps=False
-        --exclude=libstdc++-devel --skip-broken upgrade -y
+    
     - name: Unmount ISO
       mount:
         path: "/mnt/rhel8-10"
