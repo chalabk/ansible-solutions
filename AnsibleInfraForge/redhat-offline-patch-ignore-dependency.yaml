@@ -6,6 +6,7 @@
     iso_file: /dev/sr0
     mount_path: /mnt/rhel8-10
     repo_file: /etc/yum.repos.d/rhel8-10-offline.repo
+
   tasks:
 
     - name: Ensure mount point exists
@@ -48,18 +49,20 @@
     - name: Rebuild DNF cache from ISO
       command: dnf makecache
 
-    - name: Remove libstdc++-static.i686
-      dnf:
-        name: libstdc++-static.i686
-        state: absent
-
-
     - name: Update all packages using offline ISO repos
       dnf:
         name: '*'
         state: latest
         disablerepo: '*'
         enablerepo: rhel8-BaseOS,rhel8-AppStream
+      ignore_errors: true  # Allow fallback if this fails
+
+    - name: Update all packages using offline ISO repos (skip broken deps)
+      command: >
+        dnf --disablerepo='*' --enablerepo=rhel8-BaseOS,rhel8-AppStream
+        --setopt=tsflags=nodocs --setopt=install_weak_deps=False
+        --skip-broken upgrade -y
+      when: ansible_failed_result is defined or true
 
     - name: Unmount ISO
       mount:
