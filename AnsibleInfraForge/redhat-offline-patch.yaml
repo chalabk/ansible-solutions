@@ -27,6 +27,7 @@
          baseurl=file:///mnt/rhel8
          enabled=1
          gpgcheck=0
+        mode: '0644'
 
 
 
