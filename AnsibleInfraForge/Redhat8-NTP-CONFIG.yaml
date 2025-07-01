@@ -1,0 +1,36 @@
+
+---
+- name: Configure timezone and chrony NTP server on RHEL 8.10
+  hosts: all
+  become: true
+  vars:
+    timezone: Africa/Djibouti
+    ntp_server: 10.1.75.111
+
+  tasks:
+    - name: Set system timezone to {{ timezone }}
+      command: timedatectl set-timezone {{ timezone }}
+
+    - name: Backup existing chrony.conf
+      copy:
+        src: /etc/chrony.conf
+        dest: /etc/chrony.conf.bak
+        remote_src: yes
+        force: no
+
+    - name: Replace chrony.conf with custom NTP server
+      copy:
+        dest: /etc/chrony.conf
+        content: |
+          server {{ ntp_server }} iburst
+          driftfile /var/lib/chrony/drift
+          makestep 1.0 3
+          rtcsync
+          logdir /var/log/chrony
+        mode: '0644'
+
+    - name: Restart chronyd to apply changes
+      systemd:
+        name: chronyd
+        state: restarted
+        enabled: true
