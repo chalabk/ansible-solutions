@@ -1,43 +1,54 @@
-
 ---
-- name: Offline patch update from ISO on RHEL 8.10
+- name: Offline patch RHEL 8 using mounted ISO
   hosts: all
-  become: yes
+  become: true
+  vars:
+    iso_file: /dev/sr0
+    mount_path: /mnt/rhel8-10
+    repo_file: /etc/yum.repos.d/rhel8-10-offline.repo
   tasks:
 
-    - name: Create mount point for ISO
+    - name: Ensure mount point exists
       file:
-        path: /mnt/rhel8
+        path: "/mnt/rhel8-10"
         state: directory
-        mode: '0755'
 
-    - name: Mount ISO file
+    - name: Mount RHEL 8 ISO to /mnt/rhel8-10
       mount:
-        path: /mnt/rhel8
-        src: /dev/sr0
+        src: "/dev/sr0"
+        path: "/mnt/rhel8-10"
         fstype: iso9660
+        opts: loop,ro
         state: mounted
 
-    - name: Copy repo file to /etc/yum.repos.d/
+    - name: Create offline repo pointing to ISO
       copy:
-        dest: /etc/yum.repos.d/local.repo
+        dest: "/etc/yum.repos.d/rhel8-10-offline.repo"
         content: |
-         [local-rhel8]
-         name=RHEL 8 Local
-         baseurl=file:///mnt/rhel8
-         enabled=1
-         gpgcheck=0
+          [rhel8-BaseOS]
+          name=RHEL 8 BaseOS from ISO
+          baseurl=file:///mnt/rhel8-10/BaseOS
+          enabled=1
+          gpgcheck=0
+
+          [rhel8-AppStream]
+          name=RHEL 8 AppStream from ISO
+          baseurl=file:///mnt/rhel8-10/AppStream
+          enabled=1
+          gpgcheck=0
         mode: '0644'
 
+    - name: Disable all other repositories (optional for safety)
+      command: dnf config-manager --disable \*
+      ignore_errors: true
 
-
-    - name: Clear existing YUM cache
+    - name: Clean DNF metadata
       command: dnf clean all
 
-    - name: Rebuild YUM cache
+    - name: Rebuild DNF cache from ISO
       command: dnf makecache
 
-    - name: Update all packages using offline repo
+    - name: Update all packages using offline ISO repos
       dnf:
         name: '*'
         state: latest
@@ -46,10 +57,11 @@
 
     - name: Unmount ISO
       mount:
-        path: /mnt/rhel8-10
+        path: "/mnt/rhel8-10"
         state: unmounted
 
     - name: Remove offline repo file
       file:
-        path: /etc/yum.repos.d/rhel8-10-offline.repo
+        path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
