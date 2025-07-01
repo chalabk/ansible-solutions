@@ -57,13 +57,11 @@
         enablerepo: rhel8-BaseOS,rhel8-AppStream
       ignore_errors: true  # Allow fallback if this fails
 
-    - name: Update all packages using offline ISO repos (skip broken deps)
+    - name: Upgrade all packages except libstdc++-devel
       command: >
         dnf --disablerepo='*' --enablerepo=rhel8-BaseOS,rhel8-AppStream
         --setopt=tsflags=nodocs --setopt=install_weak_deps=False
-        --skip-broken upgrade -y
-      when: ansible_failed_result is defined or true
-
+        --exclude=libstdc++-devel --skip-broken upgrade -y
     - name: Unmount ISO
       mount:
         path: "/mnt/rhel8-10"
