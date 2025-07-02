@@ -1,0 +1,56 @@
+
+---
+- name: Configure NTP client and set timezone on Ubuntu 22
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Set timezone to Africa/Djibouti
+      ansible.builtin.command: timedatectl set-timezone Africa/Djibouti
+
+    - name: Install NTP package
+      ansible.builtin.apt:
+        name: ntp
+        state: present
+        update_cache: yes
+
+    - name: Backup original ntp.conf
+      ansible.builtin.copy:
+        src: /etc/ntp.conf
+        dest: /etc/ntp.conf.bak
+        remote_src: yes
+        backup: yes
+
+    - name: Configure NTP server
+      ansible.builtin.blockinfile:
+        path: /etc/ntp.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          server 10.1.75.111 iburst
+        create: yes
+
+    - name: Comment out default Ubuntu NTP pool servers
+      ansible.builtin.replace:
+        path: /etc/ntp.conf
+        regexp: '^(\s*)server\s+\d+\.ubuntu\.pool\.ntp\.org.*'
+        replace: '#\1server \2'
+
+    - name: Restart NTP service
+      ansible.builtin.service:
+        name: ntp
+        state: restarted
+        enabled: yes
+
+    - name: Wait for NTP service to start
+      ansible.builtin.wait_for:
+        port: 123
+        timeout: 10
+        state: started
+
+    - name: Check if NTP is synchronized
+      ansible.builtin.command: timedatectl show
+      register: time_status
+
+    - name: Display NTP synchronized status
+      ansible.builtin.debug:
+        msg: "{{ time_status.stdout_lines | select('search', 'NTPSynchronized=') | list }}"
