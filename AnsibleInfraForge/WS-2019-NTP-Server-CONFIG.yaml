@@ -8,9 +8,12 @@
 
   tasks:
 
-    - name: Set Windows Timezone
-      win_timezone:
-        timezone: "{{ timezone_name }}"
+    #- name: Set Windows Timezone
+    #  win_timezone:
+     #   timezone: "{{ timezone_name }}"
+    - name: Set timezone to Africa/Djibouti
+      ansible.windows.win_timezone:
+        timezone: "E. Africa Standard Time"
 
     - name: Set NTP Server Configuration
       win_shell: |
