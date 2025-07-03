@@ -60,6 +60,12 @@
         state: latest
         disablerepo: '*'
         enablerepo: rhel8-BaseOS,rhel8-AppStream
+        
+    - name: Reboot the server after patching
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+        test_command: whoami
+
 
     - name: Unmount ISO
       mount:
