@@ -4,11 +4,11 @@
   gather_facts: false
 
   collections:
-    - ansible.windows  # Ensure the collection is loaded
+    - ansible.windows
 
   vars:
     ntp_server: "10.1.75.111"
-    timezone_name: "E. Africa Standard Time"  # Correct Windows time zone name for Africa/Djibouti
+    timezone_name: "E. Africa Standard Time"  # Windows timezone name for Africa/Djibouti
 
   tasks:
 
@@ -16,7 +16,7 @@
       win_timezone:
         timezone: "{{ timezone_name }}"
 
-    - name: Set NTP Server Configuration
+    - name: Configure NTP Server
       win_shell: |
         w32tm /config /manualpeerlist:"{{ ntp_server }}" /syncfromflags:manual /update
 
@@ -27,15 +27,10 @@
         data: 1
         type: dword
 
-    - name: Ensure Windows Time service is set to Automatic
+    - name: Ensure Windows Time service is set to Auto
       win_service:
         name: w32time
         start_mode: auto
-
-    - name: Start Windows Time service
-      win_service:
-        name: w32time
-        state: started
 
     - name: Restart Windows Time service
       win_service:
@@ -47,10 +42,6 @@
       register: resync_output
       failed_when: "'The service has not been started' in resync_output.stderr"
 
-    - name: Query NTP Sync Status
-      win_shell: w32tm /query /status
-      register: ntp_status
-
     - name: Show NTP Sync Output
       debug:
-        var: ntp_status.stdout_lines
+        var: resync_output.stdout_lines
