@@ -1,19 +1,20 @@
 ---
-- name: Configure NTP Client on Windows Server 2019
+- name: Configure NTP Client and Timezone on Windows Server 2019
   hosts: all
   gather_facts: false
+
+  collections:
+    - ansible.windows  # Ensure the collection is loaded
+
   vars:
     ntp_server: "10.1.75.111"
-    timezone_name: "Africa/Djibouti"
+    timezone_name: "E. Africa Standard Time"  # Correct Windows time zone name for Africa/Djibouti
 
   tasks:
 
-    #- name: Set Windows Timezone
-    #  win_timezone:
-     #   timezone: "{{ timezone_name }}"
-    - name: Set timezone to Africa/Djibouti
-      ansible.windows.win_timezone:
-        timezone: "E. Africa Standard Time"
+    - name: Set Windows Timezone to Africa/Djibouti
+      win_timezone:
+        timezone: "{{ timezone_name }}"
 
     - name: Set NTP Server Configuration
       win_shell: |
