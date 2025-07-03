@@ -7,7 +7,7 @@
     - ansible.windows
 
   vars:
-    ntp_server: "10.1.75.111"
+    ntp_server: "10.100.4.111"
     timezone_name: "E. Africa Standard Time"  # Windows timezone name for Africa/Djibouti
 
   tasks:
