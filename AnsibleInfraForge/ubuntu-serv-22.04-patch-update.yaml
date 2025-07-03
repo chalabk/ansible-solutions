@@ -1,6 +1,6 @@
 ---
 - name: Update Ubuntu Server 22.04 to latest patch level
-  hosts: ubuntu22
+  hosts: all
   become: yes
   tasks:
 
