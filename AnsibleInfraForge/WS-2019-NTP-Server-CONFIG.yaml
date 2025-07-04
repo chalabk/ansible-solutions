@@ -15,6 +15,15 @@
     - name: Set Windows Timezone to Africa/Djibouti
       win_timezone:
         timezone: "{{ timezone_name }}"
+    - name: Ensure Windows Time service is set to Auto
+      win_service:
+        name: w32time
+        start_mode: auto
+
+    - name: Restart Windows Time service
+      win_service:
+        name: w32time
+        state: restarted
 
     - name: Configure NTP Server
       win_shell: |
@@ -26,11 +35,6 @@
         name: Enabled
         data: 1
         type: dword
-
-    - name: Ensure Windows Time service is set to Auto
-      win_service:
-        name: w32time
-        start_mode: auto
 
     - name: Restart Windows Time service
       win_service:
