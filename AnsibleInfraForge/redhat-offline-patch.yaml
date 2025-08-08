@@ -8,21 +8,21 @@
     repo_file: /etc/yum.repos.d/rhel8-10-offline.repo
   tasks:
 
-    - name: Ensure mount directory exists
-      ansible.builtin.file:
+- name: Ensure mount directory exists
+ ansible.builtin.file:
       path: /mnt/rhel8-10
       state: directory
       mode: '0755'
 
-    - name: Mount RHEL 8 ISO to /mnt/rhel8-10
-      ansible.posix.mount:
+- name: Mount RHEL 8 ISO to /mnt/rhel8-10
+  ansible.posix.mount:
         src: /dev/sr0
         path: /mnt/rhel8-10
         fstype: iso9660
         opts: loop,ro
         state: mounted
 
-    - name: Create offline repo pointing to ISO
+- name: Create offline repo pointing to ISO
       copy:
         dest: "/etc/yum.repos.d/rhel8-10-offline.repo"
         content: |
@@ -39,7 +39,7 @@
           gpgcheck=0
         mode: '0644'
 
-    - name: Disable all other repositories (optional for safety)
+ - name: Disable all other repositories (optional for safety)
       command: dnf config-manager --disable \*
       ignore_errors: true
 
@@ -81,6 +81,7 @@
       file:
         path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
 
 
 
