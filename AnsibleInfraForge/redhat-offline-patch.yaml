@@ -12,6 +12,7 @@
       file:
         path: "/mnt/rhel8-10"
         state: directory
+        mode: '0755'
 
     - name: Mount RHEL 8 ISO to /mnt/rhel8-10
       mount:
@@ -81,6 +82,7 @@
       file:
         path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
 
 
 
