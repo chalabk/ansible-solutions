@@ -60,10 +60,7 @@
         state: latest
         disablerepo: '*'
         enablerepo: rhel8-BaseOS,rhel8-AppStream
-    - name: Reboot the system
-      reboot:
-        reboot_timeout: 600
-        test_command: whoami    
+     
 
     - name: Unmount ISO
       mount:
@@ -75,3 +72,7 @@
         path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
 
+    - name: Reboot the system
+      reboot:
+        reboot_timeout: 600
+        test_command: whoami 
