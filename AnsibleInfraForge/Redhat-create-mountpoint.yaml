@@ -1,0 +1,12 @@
+---
+- name: Create directory /mnt/rhel8-10
+  hosts: your_target_hosts
+  become: true
+  tasks:
+    - name: Ensure /mnt/rhel8-10 exists
+      file:
+        path: /mnt/rhel8-10
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
