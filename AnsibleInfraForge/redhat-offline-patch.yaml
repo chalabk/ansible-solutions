@@ -7,25 +7,25 @@
     mount_path: /mnt/rhel8-10
     repo_file: /etc/yum.repos.d/rhel8-10-offline.repo
   tasks:
+    - name: Ensure mount directory exists
+      ansible.builtin.file:
+        path: "{{ mount_path }}"
+        state: directory
+        mode: '0755'
 
-- name: Ensure mount directory exists
-  ansible.builtin.file:
-      path: /mnt/rhel8-10
-      state: directory
-      mode: '0755'
-
-- name: Mount RHEL 8 ISO to /mnt/rhel8-10
-  ansible.posix.mount:
-        src: /dev/sr0
-        path: /mnt/rhel8-10
+    - name: Mount RHEL 8 ISO to /mnt/rhel8-10
+      ansible.posix.mount:
+        src: "{{ iso_file }}"
+        path: "{{ mount_path }}"
         fstype: iso9660
         opts: loop,ro
         state: mounted
+        fstab: no
 
-- name: Create offline repo pointing to ISO
-  copy:
-     dest: "/etc/yum.repos.d/rhel8-10-offline.repo"
-     content: |
+    - name: Create offline repo pointing to ISO
+      copy:
+        dest: "{{ repo_file }}"
+        content: |
           [rhel8-BaseOS]
           name=RHEL 8 BaseOS from ISO
           baseurl=file:///mnt/rhel8-10/BaseOS
@@ -37,9 +37,9 @@
           baseurl=file:///mnt/rhel8-10/AppStream
           enabled=1
           gpgcheck=0
-     mode: '0644'
+        mode: '0644'
 
- - name: Disable all other repositories (optional for safety)
+    - name: Disable all other repositories (optional for safety)
       command: dnf config-manager --disable \*
       ignore_errors: true
 
@@ -51,10 +51,9 @@
 
     - name: Remove libstdc++-static.i686
       dnf:
-       name: libstdc++-static.i686 
-       state: absent
+        name: libstdc++-static.i686
+        state: absent
 
-    
     - name: Update all packages using offline ISO repos
       dnf:
         name: '*'
@@ -63,32 +62,20 @@
         enablerepo: rhel8-BaseOS,rhel8-AppStream
 
     - name: Unmount ISO
-      mount:
-         path: "/mnt/rhel8-10"
-         state: unmounted
-         
+      ansible.posix.mount:
+        path: "{{ mount_path }}"
+        state: unmounted
+
     - name: Eject CD/DVD (to avoid booting from ISO)
-      command: eject {{ iso_file }}
+      command: eject "{{ iso_file }}"
       ignore_errors: true
-        
+
     - name: Reboot the server after patching
       ansible.builtin.reboot:
         reboot_timeout: 600
         test_command: whoami
 
-
     - name: Remove offline repo file
       file:
-        path: "/etc/yum.repos.d/rhel8-10-offline.repo"
+        path: "{{ repo_file }}"
         state: absent
-
-
-
-
-
-
-
-
-
-
-
