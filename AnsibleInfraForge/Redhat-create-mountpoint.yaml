@@ -1,6 +1,6 @@
 ---
 - name: Create directory /mnt/rhel8-10
-  hosts: your_target_hosts
+  hosts: all
   become: true
   tasks:
     - name: Ensure /mnt/rhel8-10 exists
