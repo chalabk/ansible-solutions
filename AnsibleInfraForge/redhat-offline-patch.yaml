@@ -62,7 +62,7 @@
         enablerepo: rhel8-BaseOS,rhel8-AppStream
 
     - name: Unmount ISO
-        mount:
+      mount:
          path: "/mnt/rhel8-10"
          state: unmounted
         
@@ -76,5 +76,6 @@
       file:
         path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
 
 
