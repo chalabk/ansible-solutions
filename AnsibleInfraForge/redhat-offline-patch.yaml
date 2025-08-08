@@ -65,6 +65,10 @@
       mount:
          path: "/mnt/rhel8-10"
          state: unmounted
+         
+    - name: Eject CD/DVD (to avoid booting from ISO)
+      command: eject {{ iso_file }}
+      ignore_errors: true
         
     - name: Reboot the server after patching
       ansible.builtin.reboot:
@@ -76,6 +80,7 @@
       file:
         path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
 
 
 
