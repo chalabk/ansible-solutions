@@ -8,19 +8,19 @@
     repo_file: /etc/yum.repos.d/rhel8-10-offline.repo
   tasks:
 
-- name: Ensure mount directory exists
-  ansible.builtin.file:
-    path: /mnt/rhel8-10
-    state: directory
-    mode: '0755'
+    - name: Ensure mount directory exists
+      ansible.builtin.file:
+      path: /mnt/rhel8-10
+      state: directory
+      mode: '0755'
 
-- name: Mount RHEL 8 ISO to /mnt/rhel8-10
-  ansible.posix.mount:
-    src: /dev/sr0
-    path: /mnt/rhel8-10
-    fstype: iso9660
-    opts: loop,ro
-    state: mounted
+    - name: Mount RHEL 8 ISO to /mnt/rhel8-10
+      ansible.posix.mount:
+        src: /dev/sr0
+        path: /mnt/rhel8-10
+        fstype: iso9660
+        opts: loop,ro
+        state: mounted
 
     - name: Create offline repo pointing to ISO
       copy:
@@ -81,6 +81,7 @@
       file:
         path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
 
 
 
