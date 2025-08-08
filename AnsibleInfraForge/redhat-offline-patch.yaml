@@ -23,9 +23,9 @@
         state: mounted
 
 - name: Create offline repo pointing to ISO
-      copy:
-        dest: "/etc/yum.repos.d/rhel8-10-offline.repo"
-        content: |
+  copy:
+     dest: "/etc/yum.repos.d/rhel8-10-offline.repo"
+     content: |
           [rhel8-BaseOS]
           name=RHEL 8 BaseOS from ISO
           baseurl=file:///mnt/rhel8-10/BaseOS
@@ -37,7 +37,7 @@
           baseurl=file:///mnt/rhel8-10/AppStream
           enabled=1
           gpgcheck=0
-        mode: '0644'
+     mode: '0644'
 
  - name: Disable all other repositories (optional for safety)
       command: dnf config-manager --disable \*
@@ -81,6 +81,7 @@
       file:
         path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
 
 
 
