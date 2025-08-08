@@ -9,7 +9,7 @@
   tasks:
 
 - name: Ensure mount directory exists
- ansible.builtin.file:
+  ansible.builtin.file:
       path: /mnt/rhel8-10
       state: directory
       mode: '0755'
@@ -81,6 +81,7 @@
       file:
         path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
 
 
 
