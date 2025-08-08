@@ -7,24 +7,23 @@
     mount_path: /mnt/rhel8-10
     repo_file: /etc/yum.repos.d/rhel8-10-offline.repo
   tasks:
-    - name: Ensure mount directory exists
-      ansible.builtin.file:
-        path: "{{ mount_path }}"
+
+    - name: Ensure mount point exists
+      file:
+        path: "/mnt/rhel8-10"
         state: directory
-        mode: '0755'
 
     - name: Mount RHEL 8 ISO to /mnt/rhel8-10
-      ansible.posix.mount:
-        src: "{{ iso_file }}"
-        path: "{{ mount_path }}"
+      mount:
+        src: "/dev/sr0"
+        path: "/mnt/rhel8-10"
         fstype: iso9660
         opts: loop,ro
         state: mounted
-        fstab: no
 
     - name: Create offline repo pointing to ISO
       copy:
-        dest: "{{ repo_file }}"
+        dest: "/etc/yum.repos.d/rhel8-10-offline.repo"
         content: |
           [rhel8-BaseOS]
           name=RHEL 8 BaseOS from ISO
@@ -54,28 +53,25 @@
         name: libstdc++-static.i686
         state: absent
 
+
     - name: Update all packages using offline ISO repos
       dnf:
         name: '*'
         state: latest
         disablerepo: '*'
         enablerepo: rhel8-BaseOS,rhel8-AppStream
+    - name: Reboot the system
+      reboot:
+        reboot_timeout: 600
+        test_command: whoami    
 
     - name: Unmount ISO
-      ansible.posix.mount:
-        path: "{{ mount_path }}"
+      mount:
+        path: "/mnt/rhel8-10"
         state: unmounted
-
-    - name: Eject CD/DVD (to avoid booting from ISO)
-      command: eject "{{ iso_file }}"
-      ignore_errors: true
-
-    - name: Reboot the server after patching
-      ansible.builtin.reboot:
-        reboot_timeout: 600
-        test_command: whoami
 
     - name: Remove offline repo file
       file:
-        path: "{{ repo_file }}"
+        path: "/etc/yum.repos.d/rhel8-10-offline.repo"
         state: absent
+
