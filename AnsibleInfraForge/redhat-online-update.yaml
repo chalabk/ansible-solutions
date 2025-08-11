@@ -1,0 +1,35 @@
+---
+- name: Upgrade RHEL 8.3 to 8.10 online
+  hosts: all
+  become: true
+  
+  tasks:
+    - name: Enable required RHEL 8 repos
+      command: >
+        subscription-manager repos
+        --enable=rhel-8-for-x86_64-baseos-rpms
+        --enable=rhel-8-for-x86_64-appstream-rpms
+
+    - name: Clean DNF cache
+      command: dnf clean all
+
+    - name: Remove cached metadata
+      file:
+        path: /var/cache/dnf
+        state: absent
+
+    - name: Update all packages to latest (8.10)
+      command: dnf update -y
+
+    - name: Reboot system
+      reboot:
+        msg: "Rebooting after RHEL upgrade"
+        reboot_timeout: 1200
+
+    - name: Check RHEL version after reboot
+      command: cat /etc/redhat-release
+      register: version_check
+
+    - name: Show upgraded RHEL version
+      debug:
+        msg: "System is now running: {{ version_check.stdout }}"
