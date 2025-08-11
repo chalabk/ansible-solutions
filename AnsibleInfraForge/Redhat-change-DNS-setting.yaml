@@ -1,3 +1,4 @@
+---
 - name: Update DNS settings in ifcfg files and restart NetworkManager
   hosts: all
   become: yes
