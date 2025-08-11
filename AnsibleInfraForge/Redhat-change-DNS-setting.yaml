@@ -1,0 +1,32 @@
+- name: Update DNS settings in ifcfg files and restart NetworkManager
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Comment out existing DNS entries
+      replace:
+        path: "{{ item }}"
+        regexp: '^(DNS[0-9]+=.*)'
+        replace: '#\1'
+      loop: "{{ lookup('fileglob', '/etc/sysconfig/network-scripts/ifcfg-*', wantlist=True) }}"
+
+    - name: Add new DNS1 entry
+      lineinfile:
+        path: "{{ item }}"
+        regexp: '^DNS1='
+        line: 'DNS1=10.1.71.10'
+        state: present
+      loop: "{{ lookup('fileglob', '/etc/sysconfig/network-scripts/ifcfg-*', wantlist=True) }}"
+
+    - name: Add new DNS2 entry
+      lineinfile:
+        path: "{{ item }}"
+        regexp: '^DNS2='
+        line: 'DNS2=10.1.80.30'
+        state: present
+      loop: "{{ lookup('fileglob', '/etc/sysconfig/network-scripts/ifcfg-*', wantlist=True) }}"
+
+    - name: Restart NetworkManager
+      systemd:
+        name: NetworkManager
+        state: restarted
