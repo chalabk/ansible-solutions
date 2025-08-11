@@ -1,9 +1,28 @@
+
 ---
-- name: Upgrade RHEL 8.3 to 8.10 online
+- name: Upgrade RHEL 8.3 to 8.10 online with subscription registration
   hosts: all
   become: true
-  
+  vars:
+    rhsm_username: "talilem"
+    rhsm_password: "MiWaBu3220cbo"
+
   tasks:
+    - name: Register system to Red Hat Subscription Manager
+      command: >
+        subscription-manager register
+        --force
+        --username {{ rhsm_username }}
+        --password {{ rhsm_password }}
+        --autosubscribe
+      register: reg_result
+      changed_when: "'System has been registered' in reg_result.stdout or reg_result.rc == 0"
+      failed_when: reg_result.rc not in [0, 64]  # 64 = already registered
+
+    - name: Refresh subscription manager
+      command: subscription-manager refresh
+      when: reg_result.changed or reg_result.rc == 0
+
     - name: Enable required RHEL 8 repos
       command: >
         subscription-manager repos
@@ -33,3 +52,4 @@
     - name: Show upgraded RHEL version
       debug:
         msg: "System is now running: {{ version_check.stdout }}"
+
