@@ -10,6 +10,7 @@
         regexp: '^(DNS[0-9]+=.*)'
         replace: '#\1'
       loop: "{{ lookup('fileglob', '/etc/sysconfig/network-scripts/ifcfg-*', wantlist=True) }}"
+                                    
 
     - name: Add new DNS1 entry
       lineinfile:
