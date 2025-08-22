@@ -1,0 +1,8 @@
+---
+- name: Enforce strict password policy and set password expiry for existing users
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Set password quality requirements in /etc/security/pwquality.conf
