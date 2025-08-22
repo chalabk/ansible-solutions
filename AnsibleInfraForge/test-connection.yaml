@@ -1,8 +1,12 @@
 ---
-- name: Enforce strict password policy and set password expiry for existing users
+- name: Ping 4.2.2.2 from hosts
   hosts: all
-  become: true
-
+  gather_facts: no
   tasks:
+    - name: Run ping command to 4.2.2.2
+      ansible.builtin.command: ping -c 4 4.2.2.2
+      register: ping_result
 
-    - name: Set password quality requirements in /etc/security/pwquality.conf
+    - name: Show ping output
+      ansible.builtin.debug:
+        var: ping_result.stdout
